@@ -1,25 +1,21 @@
+const cypress = require("cypress");
+
 // ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+//This commands are meant to GET and filter the API response respectively 
+Cypress.Commands.add('getApiEntries', () =>{
+return cy.request('GET', 'https://api.publicapis.org/entries').then((response)=>{
+    expect(response.status).to.eq(200);
+    return response.body.entries;
+ });
+});
+
+Cypress.Commands.add('filterAndValidateObjectsByCategory', (category, expectedCount ) => {
+    cy.getApiEntries().then((entries) => {
+        const filteredObjects = entries.filter((entry) => entry.Category == category);
+        expect(filteredObjects.lenght).to.eq(expectedCount);
+
+        cy.log('Found Objects:', filteredObjects)
+    });
+});
+
+
